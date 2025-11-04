@@ -37,7 +37,7 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: frontend/dist/ # trailing slash is required
+          local-dir: frontend/dist/
           server-dir: ${{ secrets.FTP_REMOTE_PATH }}/ # trailing slash is required
           log-level: verbose
           exclude: .gitignore,.github
