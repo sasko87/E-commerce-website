@@ -1,0 +1,43 @@
+name: Deploy Vite to OrangeHost via FTP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+        working-directory: Frontend
+
+      # Step 4: Build Vite project
+      - name: Build Vite app
+        run: npm run build
+        working-directory: Frontend
+
+      # Step 5: Deploy via FTP
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: Frontend/dist/ # trailing slash is required
+          server-dir: ${{ secrets.FTP_REMOTE_PATH }}/ # trailing slash is required
+          log-level: verbose
+          exclude: .gitignore,.github

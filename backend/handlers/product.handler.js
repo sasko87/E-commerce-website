@@ -4,6 +4,7 @@ import {
   createNewProduct,
   deleteOneProduct,
   recommendedProducts,
+  Product,
 } from "../pkg/product.model.js";
 import { redis } from "../lib/redis.js";
 import cloudinary from "../lib/cloudinary.js";
@@ -30,7 +31,7 @@ const getFeaturedProducts = async (req, res) => {
     }
 
     await redis.set("featured_products", JSON.stringify(featuredProducts));
-    return res.status(200).send({ featuredProducts });
+    return res.status(200).send(featuredProducts);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -111,17 +112,17 @@ const getProductsByCategoory = async (req, res) => {
 
 const toggleFeaturedProduct = async (req, res) => {
   try {
-    const product = await filterProducts({ _id: req.params.id });
-    if (product) {
-      product.isFeatured = !product.isFeatured;
+    const product = await Product.findById(req.params.id);
 
-      const updatedProduct = product.save();
-
-      await updateFeaturedProductsCache();
-      return res.status(200).send(updatedProduct);
-    } else {
+    if (!product) {
       return res.status(404).send({ error: "Product not found" });
     }
+
+    product.isFeatured = !product.isFeatured;
+    const updatedProduct = await product.save();
+
+    await updateFeaturedProductsCache();
+    return res.status(200).send(updatedProduct);
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
