@@ -11,7 +11,7 @@ export const useProductStore = create((set) => ({
   createProduct: async (productData) => {
     set({ loading: true });
     try {
-      const res = await axios.post("http://localhost:5000/api/products", productData);
+      const res = await axios.post("/products", productData);
       set((prevState) => ({
         products: [...prevState.products, res.data],
       }));
@@ -25,7 +25,7 @@ export const useProductStore = create((set) => ({
   fetchAllProducts: async () => {
     set({ loading: true });
     try {
-      const res = await axios.get("http://localhost:5000/api/products");
+      const res = await axios.get("/products");
       set({ products: res.data.products, loading: false });
     } catch (error) {
       console.log(error);
@@ -36,7 +36,7 @@ export const useProductStore = create((set) => ({
   deleteProduct: async (id) => {
     set({ loading: true });
     try {
-      const res = await axios.delete(`http://localhost:5000/api/products/${id}`);
+      const res = await axios.delete(`/products/${id}`);
       set((prevProducts) => ({
         products: prevProducts.products.filter((product) => product._id !== id),
         loading: false,
@@ -48,7 +48,7 @@ export const useProductStore = create((set) => ({
   },
   toggleFeaturedProduct: async (productId) => {
     try {
-      const res = await axios.patch(`http://localhost:5000/api/products/${productId}`);
+      const res = await axios.patch(`/products/${productId}`);
       const newIsFeatured = res.data?.isFeatured;
 
       set((state) => {
@@ -73,7 +73,7 @@ export const useProductStore = create((set) => ({
     set({ loading: true });
 
     try {
-      const response = await axios.get(`http://localhost:5000/api/products/category/${category}`);
+      const response = await axios.get(`/products/category/${category}`);
       set({ products: response.data.products, loading: false });
     } catch (error) {
       set({ loading: false });
@@ -84,7 +84,7 @@ export const useProductStore = create((set) => ({
   fetchFeaturedProducts: async () => {
     set({ loading: true });
     try {
-      const response = await axios("http://localhost:5000/api/products/featured");
+      const response = await axios("/products/featured");
       set({ featuredProducts: response.data, loading: false });
     } catch (error) {
       set({ error: "Failed to fetch data", loading: false });

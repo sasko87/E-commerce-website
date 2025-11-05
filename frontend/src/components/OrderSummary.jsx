@@ -14,7 +14,7 @@ const OrderSummary = () => {
   const formattedSavings = savings.toFixed(2);
 
   const handlePayment = async () => {
-    const res = await axios.post("http://localhost:5000/api/payments/create-checkout-session", {
+    const res = await axios.post("/payments/create-checkout-session", {
       products: cart,
       couponCode: coupon ? coupon.code : null,
     });
