@@ -18,6 +18,8 @@ const FeaturedPosts = ({ featured }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  console.log(featured)
+
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => prevIndex + itemsPerPage);
   };

@@ -8,7 +8,7 @@ const PeopleAlsoBought = () => {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const res = await axios.get("/products/recommendations");
+        const res = await axios.get("http://localhost:5000/api/products/recommendations");
         setRecommendations(res.data.products); // ✅ fix here
       } catch (err) {
         console.error("Error fetching recommendations:", err);

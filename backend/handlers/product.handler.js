@@ -25,10 +25,12 @@ const getFeaturedProducts = async (req, res) => {
     if (featuredProducts) {
       return res.status(200).send(JSON.parse(featuredProducts));
     }
-    featuredProducts = await filterProducts({ isFeatured: true }.lean());
+    featuredProducts = await filterProducts({ isFeatured: true });
     if (!featuredProducts) {
       return res.status(404).send({ error: "No featured products found" });
     }
+
+    console.log(featuredProducts)
 
     await redis.set("featured_products", JSON.stringify(featuredProducts));
     return res.status(200).send(featuredProducts);

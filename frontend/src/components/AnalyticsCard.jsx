@@ -1,14 +1,11 @@
-import { motion } from "framer-motion";
+
+import MotionDiv from "./UI/MotionDiv";
 
 const AnalyticsCard = ({ title, value, icon: Icon, color }) => {
   return (
     <>
-      <motion.div
-        className={`bg-gray-800 rounded-lg p-6 shadow-lg overflow-hidden relative ${color}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+    <MotionDiv className={`bg-gray-800 rounded-lg p-6 shadow-lg overflow-hidden relative ${color}`} duration={0.5} delay={0}>
+   
         <div className="flex justify-between items-center">
           <div className="z-10">
             <p className="text-emerald-300 text-sm mb-1 font-semibold">
@@ -21,7 +18,7 @@ const AnalyticsCard = ({ title, value, icon: Icon, color }) => {
         <div className="absolute -bottom-4 -right-4 text-emerald-800 opacity-50">
           <Icon className="h-32 w-32" />
         </div>
-      </motion.div>
+      </MotionDiv>
     </>
   );
 };

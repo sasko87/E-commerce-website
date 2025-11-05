@@ -23,13 +23,13 @@ function App() {
 
   useEffect(() => {
     checkAuth();
+   
+  }, [checkAuth]);
+  useEffect(() => {
     if (user) {
       getCartItems();
-    }
-  }, [checkAuth, getCartItems]);
-  useEffect(() => {
-    getCartItems();
-  }, [getCartItems]);
+    }     
+  }, [getCartItems, user]);
   if (checkingAuth) return <LoadingSpinner />;
 
   return (
