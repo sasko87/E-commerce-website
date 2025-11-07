@@ -19,6 +19,10 @@ const CreateProductForm = () => {
     price: "",
     category: "",
     image: "",
+    isFeatured: false,
+    onSale: false,
+    saleDiscount: 0,
+    gender: "Unisex",
   });
   const { createProduct, loading } = useProductStore();
 
@@ -151,6 +155,131 @@ const CreateProductForm = () => {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <p className="block text-sm font-medium text-gray-300">
+            Gender
+          </p>
+          <div className=" flex gap-4 my-3">
+            <label className="text-sm font-medium text-gray-300">
+              <input
+                className="mr-1"
+                type="radio"
+                name="gender"
+                value="Male"
+                checked={newProduct.gender === 'Male'}
+                onChange={() =>
+                  setNewProduct({ ...newProduct, gender: 'Male' })
+                }
+              />
+              Male
+            </label>
+            <label className="text-sm font-medium text-gray-300">
+              <input
+                className="mr-1"
+                type="radio"
+                name="gender"
+                value="Female"
+                checked={newProduct.gender === 'Female'}
+                onChange={() =>
+                  setNewProduct({ ...newProduct, gender: 'Female' })
+                }
+              />
+              Female
+            </label>
+            <label className="text-sm font-medium text-gray-300">
+              <input
+                className="mr-1"
+                type="radio"
+                name="gender"
+                value="Unisex"
+                checked={newProduct.gender === 'Unisex'}
+                onChange={() =>
+                  setNewProduct({ ...newProduct, gender: 'unisex' })
+                }
+              />
+              Unisex
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <p className="block text-sm font-medium text-gray-300">
+            Is the product featured?
+          </p>
+          <div className=" flex gap-4 my-3">
+            <label className="text-sm font-medium text-gray-300">
+              <input
+                className="mr-1"
+                type="radio"
+                name="featuredOption"
+                value="true"
+                checked={newProduct.isFeatured === true}
+                onChange={() =>
+                  setNewProduct({ ...newProduct, isFeatured: true })
+                }
+              />
+              Yes
+            </label>
+            <label className="text-sm font-medium text-gray-300">
+              <input
+                className="mr-1"
+                type="radio"
+                name="featuredOption"
+                value="false"
+                checked={newProduct.isFeatured === false}
+                onChange={() =>
+                  setNewProduct({ ...newProduct, isFeatured: false })
+                }
+              />
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <p className="block text-sm font-medium text-gray-300">
+            Is the product on sale?
+          </p>
+          <div className=" flex items-center gap-4 my-3">
+            <label className="text-sm font-medium text-gray-300">
+              <input
+                className="mr-1"
+                type="radio"
+                name="saleOption"
+                value="true"
+                checked={newProduct.onSale === true}
+                onChange={() => setNewProduct({ ...newProduct, onSale: true })}
+              />
+              Yes
+            </label>
+            {newProduct.onSale && (
+              <input
+                type="number"
+                placeholder="Sale Discount %"
+                className="border border-white/40 rounded"
+                value={newProduct.saleDiscount}
+                onChange={(e) =>
+                  setNewProduct({
+                    ...newProduct,
+                    saleDiscount: Number(e.target.value),
+                  })
+                }
+              />
+            )}
+
+            <label className="text-sm font-medium text-gray-300">
+              <input
+                className="mr-1"
+                type="radio"
+                name="saleOption"
+                value="false"
+                checked={newProduct.onSale === false}
+                onChange={() => setNewProduct({ ...newProduct, onSale: false })}
+              />
+              No
+            </label>
+          </div>
         </div>
 
         <div className="mt-1 flex items-center">

@@ -38,7 +38,7 @@ const Slider = () => {
 }, [nextSlide]);
 
   return (
-    <div className="relative w-screen max-w-screen max-h-165 mx-auto overflow-hidden rounded-lg">
+    <div className="relative w-screen  h-4/5 max-h-[800px] mx-auto overflow-hidden rounded-lg">
 <Link to={images[currentIndex].link}>
       <div className="relative w-screen aspect-[21/9] overflow-hidden">
   {images.map((image, index) => (
@@ -47,7 +47,7 @@ const Slider = () => {
       src={image.src}
       alt=""
       className={`
-        absolute top-0 left-0 w-full h-165 object-cover transition-opacity duration-999 ease-in-out
+        absolute top-0 left-0 w-full  md:h-full object-center transition-opacity duration-999 ease-in-out
         ${index === currentIndex ? "opacity-100" : "opacity-0"}
       `}
     />
@@ -71,7 +71,7 @@ const Slider = () => {
       </button>
 
       {/* Dots */}
-      <div className="flex justify-center gap-2 mt-3">
+      <div className="flex justify-center gap-2 mt-5 absolute bottom-5 left-1/2 -translate-x-1/2">
         {images.map((_, index) => (
           <div
             key={index}

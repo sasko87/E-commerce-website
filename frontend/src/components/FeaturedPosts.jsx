@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import { useCartStore } from "../store/useCartStore";
+import { useUserStore } from "../store/useUserStore";
+import { useNavigate } from "react-router-dom";
 
 const FeaturedPosts = ({ featured }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const { addToCart } = useCartStore();
+  const {user} = useUserStore()
+
+  const navigate = useNavigate()
+
+  console.log(featured)
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) setItemsPerPage(1);
@@ -18,12 +25,11 @@ const FeaturedPosts = ({ featured }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  console.log(featured)
+ 
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => prevIndex + itemsPerPage);
   };
-  console.log(featured);
   const prevSlide = () => {
     setCurrentIndex((prevIndex) => prevIndex - itemsPerPage);
   };
@@ -52,23 +58,38 @@ const FeaturedPosts = ({ featured }) => {
                   key={product._id}
                   className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 flex-shrink-0 px-2"
                 >
-                  <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden h-full transition-all duration-300 hover:shadow-xl border border-emerald-500/30">
+                  <div className="bg-white bg-opacity-10 relative backdrop-blur-sm rounded-lg shadow-lg overflow-hidden h-full transition-all duration-300 hover:shadow-xl border border-emerald-500/30">
                     <div className="overflow-hidden">
                       <img
                         src={product.image}
                         alt={product.name}
                         className="w-full h-48 object-cover transition-transform duration-300 ease-in-out hover:scale-110"
                       />
+                       {product.onSale && (<p className="absolute bg-black text-white py-1 px-3 top-2 right-2">-{product.saleDiscount}%</p>)}
                     </div>
                     <div className="p-4">
                       <h3 className="text-lg font-semibold mb-2 text-white">
                         {product.name}
                       </h3>
-                      <p className="text-emerald-300 font-medium mb-4">
+                      {/* <p className="text-emerald-300 font-medium mb-4">
                         ${product.price.toFixed(2)}
-                      </p>
+                      </p> */}
+                        {product.onSale ? (
+    <p>
+      <span className="text-emerald-400 font-medium mb-4 mr-2 text-2xl">
+        ${product.finalPrice.toFixed(2)}
+      </span>
+      <span className="text-emerald-400 font-medium mb-4 line-through">
+        ${product.price.toFixed(2)}
+      </span>
+    </p>
+  ) : (
+    <span className="text-emerald-400 text-2xl font-medium mb-4">
+      ${product.price.toFixed(2)}
+    </span>
+  )}
                       <button
-                        onClick={() => addToCart(product)}
+                        onClick={user ? () => addToCart(product) : () => navigate("/login")}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 
 												flex items-center justify-center"
                       >

@@ -29,8 +29,13 @@ const couponSchema = new mongoose.Schema(
 
 const Coupon = mongoose.model("Coupon", couponSchema, "coupons");
 
-const getOneCoupon = async (id) => {
-  return await Coupon.findOne({ userId: id, isActive: true });
+const getOneCoupon = async (filter) => {
+  // If filter contains userId, cast it to ObjectId safely
+  if (filter.userId && mongoose.Types.ObjectId.isValid(filter.userId)) {
+    filter.userId = new mongoose.Types.ObjectId(filter.userId);
+  }
+
+  return await Coupon.findOne({ ...filter, isActive: true });
 };
 
 const filterCoupon = async (filter) => {

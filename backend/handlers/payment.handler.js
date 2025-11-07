@@ -19,7 +19,7 @@ const createChechoutSession = async (req, res) => {
     let totalAmount = 0;
 
     const lineItems = products.map((product) => {
-      const amount = Math.round(product.price * 100); // price in cents
+      const amount = Math.round(product.finalPrice * 100); // price in cents
       totalAmount += amount * (product.quantity || 1);
 
       return {
@@ -148,12 +148,13 @@ const checkoutSuccess = async (req, res) => {
     // 🛍️ Create new order
     const products = JSON.parse(session.metadata.products || "[]");
 
+ 
     const newOrder = await createOrder({
       user: session.metadata.userId,
       products: products.map((product) => ({
         product: product.id,
         quantity: product.quantity,
-        price: product.price,
+        price: product.finalPrice,
       })),
       totalAmount: session.amount_total / 100,
       stripeSessionId: sessionId,

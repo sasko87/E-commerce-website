@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { UserPlus, Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../store/useUserStore.js";
 import Input from "../components/UI/Input.jsx";
@@ -16,7 +15,7 @@ const SignUp = () => {
     confirmPassword: "",
   });
 
-  const { signup, user } = useUserStore();
+  const { signup } = useUserStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -59,12 +58,23 @@ const SignUp = () => {
               placeholder="you@example.com"
               Icon={Mail}
             />
-
+   <Input
+              label="Password"
+              id="password"
+              required
+              type="password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              placeholder="*******"
+              Icon={Lock}
+            />
             <Input
               label="Confirm Password"
               id="confirmPassword"
               required
-              type={"password"}
+              type="password"
               value={formData.confirmPassword}
               onChange={(e) =>
                 setFormData({ ...formData, confirmPassword: e.target.value })

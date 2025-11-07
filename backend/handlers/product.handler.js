@@ -5,6 +5,7 @@ import {
   deleteOneProduct,
   recommendedProducts,
   Product,
+  updateProduct,
 } from "../pkg/product.model.js";
 import { redis } from "../lib/redis.js";
 import cloudinary from "../lib/cloudinary.js";
@@ -41,7 +42,7 @@ const getFeaturedProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const { name, description, price, image, category } = req.body;
+    const { name, description, price, image, category, onSale, saleDiscount, isFeatured, gender } = req.body;
     let cloudinaryResponse = null;
     if (image) {
       cloudinaryResponse = await cloudinary.uploader.upload(image, {
@@ -57,6 +58,7 @@ const createProduct = async (req, res) => {
       image: cloudinaryResponse?.secure_url
         ? cloudinaryResponse.secure_url
         : "",
+        onSale, saleDiscount, isFeatured, gender
     });
 
     return res.status(201).send(product);
@@ -138,6 +140,18 @@ async function updateFeaturedProductsCache() {
     return res.status(500).send({ error: error.message });
   }
 }
+
+const updateOneProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const updatedProduct = await updateProduct(id, updateData);
+    return res.status(200).send(updatedProduct);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
 export {
   getAllProducts,
   getFeaturedProducts,
@@ -146,4 +160,5 @@ export {
   getRecommendedProducts,
   getProductsByCategoory,
   toggleFeaturedProduct,
+  updateOneProduct,
 };

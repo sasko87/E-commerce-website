@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Trash, Star } from "lucide-react";
+import { Trash, Star, FilePen } from "lucide-react";
 import { useProductStore } from "../store/useProductStore";
 
 const ProductsList = () => {
@@ -95,8 +95,17 @@ const ProductsList = () => {
                   className="text-red-400 hover:text-red-300"
                 >
                   <Trash className="h-5 w-5" />
+                 
+                </button>
+                <button
+                 
+                  className="text-red-400 hover:text-red-300"
+                >
+                  
+                  <FilePen className="h-5 w-5" />
                 </button>
               </td>
+              
             </tr>
           ))}
         </tbody>

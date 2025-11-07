@@ -73,19 +73,30 @@ export const useUserStore = create((set, get) => ({
     }
   },
   refreshToken: async () => {
-    // Prevent multiple simultaneous refresh attempts
-    if (get().checkingAuth) return;
+  if (get().checkingAuth) {
+    // Wait until checkingAuth becomes false
+    return new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        if (!get().checkingAuth) {
+          clearInterval(interval);
+          resolve(get().user); // return updated user/token
+          console.log("Refreshed after waiting");
+        }
+      }, 50);
+    });
+  }
 
-    set({ checkingAuth: true });
-    try {
-      const response = await axios.post("/auth/refresh-token");
-      set({ checkingAuth: false });
-      return response.data;
-    } catch (error) {
-      set({ user: null, checkingAuth: false });
-      throw error;
-    }
-  },
+  set({ checkingAuth: true });
+  try {
+    const response = await axios.post("/auth/refresh-token");
+    set({ user: response.data.user, checkingAuth: false }); // update user/token
+    return response.data;
+  } catch (error) {
+    set({ user: null, checkingAuth: false });
+    throw error;
+  }
+},
+
 }));
 
 let refreshPromise = null;

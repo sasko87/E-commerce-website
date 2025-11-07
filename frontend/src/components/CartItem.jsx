@@ -34,9 +34,23 @@ const CartItem = ({ item }) => {
           </div>
 
           <div className="text-end md:order-4 md:w-32">
-            <p className="text-base font-bold text-emerald-400">
+            {/* <p className="text-base font-bold text-emerald-400">
               ${item.price}
-            </p>
+            </p> */}
+             {item.onSale ? (
+    <p className="flex flex-col">
+      <span className="text-base font-bold text-emerald-400">
+        ${item.finalPrice.toFixed(2)}
+      </span>
+      <span className="text-sm line-through font-bold text-emerald-400">
+        ${item.price.toFixed(2)}
+      </span>
+    </p>
+  ) : (
+    <span className="text-base font-bold text-emerald-400">
+      ${item.price.toFixed(2)}
+    </span>
+  )}
           </div>
         </div>
 

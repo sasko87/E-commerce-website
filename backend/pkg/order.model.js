@@ -46,8 +46,8 @@ const createOrder = async (orderData) => {
   return await order.save();
 };
 
-const findOrderByStripeSession = async (stripeSessionId) => {
-  return await Order.findOne({ stripeSessionId });
+const findOrderByStripeSession = async (sessionId) => {
+  return await Order.findOne({ stripeSessionId: sessionId });
 };
 
 export { createOrder, Order, findOrderByStripeSession };

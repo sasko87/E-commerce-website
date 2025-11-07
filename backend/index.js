@@ -37,15 +37,9 @@ app.use("/api/coupons", couponsRoutes);
 app.use("/api/payments", paymentsRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/profile", protectRoute, getProfile);
-app.use(express.static(path.join(__dirname, "./dist")));
 
-app.get("*", (req, res, next) => {
-  if (req.headers.accept && req.headers.accept.includes("text/html")) {
-    res.sendFile(path.join(__dirname, "./dist/index.html"));
-  } else {
-    next(); // Pass through for other types (like application/json)
-  }
-});
+
+
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`server is running on port ${process.env.PORT}`);
