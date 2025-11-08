@@ -35,6 +35,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    status: {
+      type: String,
+      enum: ["Pending", "In Progress", "Done", "Canceled"],
+    },
   },
   { timestamps: true }
 );
@@ -50,4 +54,19 @@ const findOrderByStripeSession = async (sessionId) => {
   return await Order.findOne({ stripeSessionId: sessionId });
 };
 
-export { createOrder, Order, findOrderByStripeSession };
+const findOrders = async () => {
+  return await Order.find({}).populate({
+    path: "products.product",
+  });
+};
+
+const updateOrder = async (id, data) => {
+  return await Order.findByIdAndUpdate(id, data, { new: true });
+};
+export {
+  createOrder,
+  Order,
+  findOrderByStripeSession,
+  findOrders,
+  updateOrder,
+};

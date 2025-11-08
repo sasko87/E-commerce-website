@@ -28,6 +28,7 @@ const productSchema = new mongoose.Schema(
       enum: ["Male", "Female", "Unisex"],
       default: "Unisex",
     },
+
     isFeatured: {
       type: Boolean,
       default: false,
@@ -41,15 +42,15 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     salePrice: {
-  type: Number,
-  min: 0,
-  validate: {
-    validator: function (v) {
-      return v <= this.price;
+      type: Number,
+      min: 0,
+      validate: {
+        validator: function (v) {
+          return v <= this.price;
+        },
+        message: "Sale price cannot be higher than original price",
+      },
     },
-    message: "Sale price cannot be higher than original price",
-  },
-},
   },
   { timestamps: true }
 );
@@ -74,7 +75,6 @@ productSchema.virtual("finalPrice").get(function () {
 productSchema.set("toJSON", { virtuals: true });
 productSchema.set("toObject", { virtuals: true });
 
-
 const Product = mongoose.model("Product", productSchema, "products");
 
 const findAllProducts = async () => {
@@ -95,21 +95,21 @@ const deleteOneProduct = async (id) => {
 };
 
 const recommendedProducts = async () => {
-   const products = await Product.aggregate([
+  const products = await Product.aggregate([
     { $sample: { size: 3 } }, // pick 3 random products
-    
   ]);
   return products.map((p) => ({
     ...p,
-    finalPrice: p.onSale && p.saleDiscount > 0
-      ? p.price - (p.price * p.saleDiscount) / 100
-      : p.price,
+    finalPrice:
+      p.onSale && p.saleDiscount > 0
+        ? p.price - (p.price * p.saleDiscount) / 100
+        : p.price,
   }));
 };
 
-const updateProduct = async(id, updateData) => {
+const updateProduct = async (id, updateData) => {
   return await Product.findByIdAndUpdate(id, updateData, { new: true });
-}
+};
 
 export {
   findAllProducts,
@@ -118,5 +118,5 @@ export {
   deleteOneProduct,
   recommendedProducts,
   Product,
-  updateProduct
+  updateProduct,
 };

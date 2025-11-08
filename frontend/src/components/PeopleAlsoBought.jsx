@@ -17,8 +17,6 @@ const PeopleAlsoBought = () => {
     fetchRecommendations();
   }, []);
 
-  console.log("Recommendations:", recommendations);
-
   return (
     <div className="mt-8">
       <h3 className="text-2xl font-semibold text-emerald-400">

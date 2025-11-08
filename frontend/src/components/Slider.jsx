@@ -2,19 +2,19 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-
-const images = [{
+const images = [
+  {
     src: "/discount-code.png",
-    link: "/login"
-},{
+    link: "/login",
+  },
+  {
     src: "/discount-jeans.png",
-    link: "/category/jeans"
-},{
+    link: "/category/jeans",
+  },
+  {
     src: "/midseason-sale.png",
-    link: "/sale"
-}
-
-  
+    link: "/sale",
+  },
 ];
 
 const Slider = () => {
@@ -33,27 +33,27 @@ const Slider = () => {
   };
 
   useEffect(() => {
-  const interval = setInterval(nextSlide, 8000);
-  return () => clearInterval(interval);
-}, [nextSlide]);
+    const interval = setInterval(nextSlide, 8000);
+    return () => clearInterval(interval);
+  }, [nextSlide]);
 
   return (
-    <div className="relative w-screen  h-4/5 max-h-[800px] mx-auto overflow-hidden rounded-lg">
-<Link to={images[currentIndex].link}>
-      <div className="relative w-screen aspect-[21/9] overflow-hidden">
-  {images.map((image, index) => (
-    <img
-      key={index}
-      src={image.src}
-      alt=""
-      className={`
+    <div className="relative w-screen   max-h-[80dvh] mx-auto overflow-hidden rounded-lg">
+      <Link to={images[currentIndex].link}>
+        <div className="relative w-screen aspect-[21/9] overflow-hidden">
+          {images.map((image, index) => (
+            <img
+              key={index}
+              src={image.src}
+              alt=""
+              className={`
         absolute top-0 left-0 w-full  md:h-full object-center transition-opacity duration-999 ease-in-out
         ${index === currentIndex ? "opacity-100" : "opacity-0"}
       `}
-    />
-  ))}
-</div>
-</Link>
+            />
+          ))}
+        </div>
+      </Link>
       {/* Left Arrow */}
       <button
         onClick={prevSlide}

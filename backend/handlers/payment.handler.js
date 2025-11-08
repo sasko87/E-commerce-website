@@ -6,6 +6,7 @@ import {
   getOneCoupon,
   updateCoupon,
 } from "../pkg/coupon.model.js";
+import { findOrders, updateOrder } from "../pkg/order.model.js";
 import { createOrder, findOrderByStripeSession } from "../pkg/order.model.js";
 
 const createChechoutSession = async (req, res) => {
@@ -79,7 +80,6 @@ const createChechoutSession = async (req, res) => {
       totalAmount: totalAmount / 100, // convert cents to dollars
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).send({ error: error.message });
   }
 };
@@ -148,7 +148,6 @@ const checkoutSuccess = async (req, res) => {
     // 🛍️ Create new order
     const products = JSON.parse(session.metadata.products || "[]");
 
- 
     const newOrder = await createOrder({
       user: session.metadata.userId,
       products: products.map((product) => ({
@@ -171,4 +170,37 @@ const checkoutSuccess = async (req, res) => {
   }
 };
 
-export { createChechoutSession, checkoutSuccess };
+const getAllOrders = async (req, res) => {
+  try {
+    const orders = await findOrders();
+    return res.status(200).send(orders);
+  } catch (error) {
+    console.error("Orders error:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = ["Pending", "In Progress", "Done", "Canceled"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid order status" });
+    }
+
+    const updatedOrder = await updateOrder(id, { status }, { new: true });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json({ message: "Order status updated", updatedOrder });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update order status" });
+  }
+};
+
+export { createChechoutSession, checkoutSuccess, getAllOrders };

@@ -5,19 +5,26 @@ import CreateProductForm from "../components/CreateProductForm";
 import ProductsList from "../components/ProductsList";
 import AnalyticsTab from "../components/AnalyticsTab";
 import { useProductStore } from "../store/useProductStore";
+import OrdersTab from "../components/OrdersTab";
 const tabs = [
   { id: "create", label: "Create Product", icon: PlusCircle },
   { id: "products", label: "Products", icon: ShoppingBasket },
   { id: "analytics", label: "Analytics", icon: BarChart },
+  { id: "orders", label: "Orders", icon: BarChart },
 ];
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("create");
-  const { fetchAllProducts } = useProductStore();
+  const [editingProduct, setEditingProduct] = useState(null);
+  const { fetchAllProducts, fetchAllOrders } = useProductStore();
 
   useEffect(() => {
     fetchAllProducts();
   }, [fetchAllProducts]);
+
+  useEffect(() => {
+    fetchAllOrders();
+  }, [fetchAllOrders]);
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="relative z-10 container mx-auto px-4 py-16">
@@ -33,7 +40,10 @@ const AdminPage = () => {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setEditingProduct(null); // reset editing when switching tabs
+              }}
               className={`flex items-center px-4 py-2 mx-2 rounded-md transition-colors duration-200 ${
                 activeTab === tab.id
                   ? "bg-emerald-600 text-white"
@@ -45,9 +55,22 @@ const AdminPage = () => {
             </button>
           ))}
         </div>
-        {activeTab === "create" && <CreateProductForm />}
-        {activeTab === "products" && <ProductsList />}
+        {activeTab === "create" && (
+          <CreateProductForm
+            editingProduct={editingProduct}
+            clearEditing={() => setEditingProduct(null)}
+          />
+        )}
+        {activeTab === "products" && (
+          <ProductsList
+            onEdit={(product) => {
+              setEditingProduct(product);
+              setActiveTab("create");
+            }}
+          />
+        )}
         {activeTab === "analytics" && <AnalyticsTab />}
+        {activeTab === "orders" && <OrdersTab />}
       </div>
     </div>
   );

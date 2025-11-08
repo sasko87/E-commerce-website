@@ -16,6 +16,7 @@ import CartPage from "./pages/CartPage";
 import { useCartStore } from "./store/useCartStore";
 import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
 import PurchaseCancelPage from "./pages/PurchaseCancelPage";
+import OnSale from "./pages/OnSale";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -23,12 +24,12 @@ function App() {
 
   useEffect(() => {
     checkAuth();
-   
   }, [checkAuth]);
+
   useEffect(() => {
     if (user) {
       getCartItems();
-    }     
+    }
   }, [getCartItems, user]);
   if (checkingAuth) return <LoadingSpinner />;
 
@@ -54,6 +55,7 @@ function App() {
               path="/login"
               element={!user ? <Login /> : <Navigate to="/" />}
             />
+            <Route path="/sale" element={<OnSale />} />
             <Route
               path="/secret-dashboard"
               element={

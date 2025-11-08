@@ -17,7 +17,6 @@ const validateCoupon = async (req, res) => {
       userId: req.user._id,
       isActive: true,
     });
-    console.log(coupon);
     if (!coupon) {
       return res.status(404).send({ error: "Coupon not found" });
     }

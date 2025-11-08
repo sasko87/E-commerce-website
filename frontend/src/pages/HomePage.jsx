@@ -23,11 +23,14 @@ const HomePage = () => {
     fetchFeaturedProducts();
   }, [fetchFeaturedProducts]);
 
-  console.log("featuredProducts:", featuredProducts);
-
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
       <Slider />
+      <div className="w-5/6 mx-auto">
+        {featuredProducts.length > 0 && (
+          <FeaturedPosts featured={featuredProducts} />
+        )}
+      </div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h1 className="text-center text-5xl sm:text-6xl font-bold text-emerald-400 mb-4">
           Explore Our Categories
@@ -41,9 +44,6 @@ const HomePage = () => {
             <CategoryItem category={category} key={category.name} />
           ))}
         </div>
-        {featuredProducts.length > 0 && (
-          <FeaturedPosts featured={featuredProducts} />
-        )}
       </div>
       <BrandSlider />
     </div>

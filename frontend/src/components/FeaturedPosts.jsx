@@ -8,11 +8,10 @@ const FeaturedPosts = ({ featured }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const { addToCart } = useCartStore();
-  const {user} = useUserStore()
+  const { user } = useUserStore();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  console.log(featured)
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) setItemsPerPage(1);
@@ -24,8 +23,6 @@ const FeaturedPosts = ({ featured }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
- 
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => prevIndex + itemsPerPage);
@@ -65,7 +62,11 @@ const FeaturedPosts = ({ featured }) => {
                         alt={product.name}
                         className="w-full h-48 object-cover transition-transform duration-300 ease-in-out hover:scale-110"
                       />
-                       {product.onSale && (<p className="absolute bg-black text-white py-1 px-3 top-2 right-2">-{product.saleDiscount}%</p>)}
+                      {product.onSale && (
+                        <p className="absolute bg-black text-white py-1 px-3 top-2 right-2">
+                          -{product.saleDiscount}%
+                        </p>
+                      )}
                     </div>
                     <div className="p-4">
                       <h3 className="text-lg font-semibold mb-2 text-white">
@@ -74,22 +75,26 @@ const FeaturedPosts = ({ featured }) => {
                       {/* <p className="text-emerald-300 font-medium mb-4">
                         ${product.price.toFixed(2)}
                       </p> */}
-                        {product.onSale ? (
-    <p>
-      <span className="text-emerald-400 font-medium mb-4 mr-2 text-2xl">
-        ${product.finalPrice.toFixed(2)}
-      </span>
-      <span className="text-emerald-400 font-medium mb-4 line-through">
-        ${product.price.toFixed(2)}
-      </span>
-    </p>
-  ) : (
-    <span className="text-emerald-400 text-2xl font-medium mb-4">
-      ${product.price.toFixed(2)}
-    </span>
-  )}
+                      {product.onSale ? (
+                        <p>
+                          <span className="text-emerald-400 font-medium mb-4 mr-2 text-2xl">
+                            ${product.finalPrice.toFixed(2)}
+                          </span>
+                          <span className="text-emerald-400 font-medium mb-4 line-through">
+                            ${product.price.toFixed(2)}
+                          </span>
+                        </p>
+                      ) : (
+                        <span className="text-emerald-400 text-2xl font-medium mb-4">
+                          ${product.price.toFixed(2)}
+                        </span>
+                      )}
                       <button
-                        onClick={user ? () => addToCart(product) : () => navigate("/login")}
+                        onClick={
+                          user
+                            ? () => addToCart(product)
+                            : () => navigate("/login")
+                        }
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 
 												flex items-center justify-center"
                       >

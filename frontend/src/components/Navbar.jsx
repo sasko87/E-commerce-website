@@ -28,6 +28,12 @@ const Navbar = () => {
             >
               Home
             </Link>
+            <Link
+              to="/sale"
+              className="text-gray-300 bg-red-700 hover:bg-red-900 px-4 py-1  transition duration-300 ease-in-out"
+            >
+              On Sale
+            </Link>
             {user && (
               <Link
                 to="/cart"

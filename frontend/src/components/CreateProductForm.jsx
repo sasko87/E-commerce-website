@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { PlusCircle, Upload, Loader } from "lucide-react";
+import { PlusCircle, Upload, Loader, FilePen } from "lucide-react";
 import { useProductStore } from "../store/useProductStore";
 const categories = [
   "jeans",
@@ -12,7 +12,7 @@ const categories = [
   "suits",
   "bags",
 ];
-const CreateProductForm = () => {
+const CreateProductForm = ({ editingProduct, clearEditing }) => {
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -24,18 +24,37 @@ const CreateProductForm = () => {
     saleDiscount: 0,
     gender: "Unisex",
   });
-  const { createProduct, loading } = useProductStore();
+  const { createProduct, loading, updateProduct } = useProductStore();
+
+  useEffect(() => {
+    if (editingProduct) {
+      setNewProduct(editingProduct);
+    }
+  }, [editingProduct]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createProduct(newProduct);
 
+    if (editingProduct) {
+      // ✅ If editing, only update — don't create a new one
+      await updateProduct(editingProduct._id, newProduct);
+      clearEditing();
+    } else {
+      // ✅ Only create if it's a new product
+      await createProduct(newProduct);
+    }
+
+    // Reset form after submission
     setNewProduct({
       name: "",
       description: "",
       price: "",
       category: "",
       image: "",
+      isFeatured: false,
+      onSale: false,
+      saleDiscount: 0,
+      gender: "Unisex",
     });
   };
 
@@ -158,9 +177,7 @@ const CreateProductForm = () => {
         </div>
 
         <div>
-          <p className="block text-sm font-medium text-gray-300">
-            Gender
-          </p>
+          <p className="block text-sm font-medium text-gray-300">Gender</p>
           <div className=" flex gap-4 my-3">
             <label className="text-sm font-medium text-gray-300">
               <input
@@ -168,9 +185,9 @@ const CreateProductForm = () => {
                 type="radio"
                 name="gender"
                 value="Male"
-                checked={newProduct.gender === 'Male'}
+                checked={newProduct.gender === "Male"}
                 onChange={() =>
-                  setNewProduct({ ...newProduct, gender: 'Male' })
+                  setNewProduct({ ...newProduct, gender: "Male" })
                 }
               />
               Male
@@ -181,9 +198,9 @@ const CreateProductForm = () => {
                 type="radio"
                 name="gender"
                 value="Female"
-                checked={newProduct.gender === 'Female'}
+                checked={newProduct.gender === "Female"}
                 onChange={() =>
-                  setNewProduct({ ...newProduct, gender: 'Female' })
+                  setNewProduct({ ...newProduct, gender: "Female" })
                 }
               />
               Female
@@ -194,9 +211,9 @@ const CreateProductForm = () => {
                 type="radio"
                 name="gender"
                 value="Unisex"
-                checked={newProduct.gender === 'Unisex'}
+                checked={newProduct.gender === "Unisex"}
                 onChange={() =>
-                  setNewProduct({ ...newProduct, gender: 'unisex' })
+                  setNewProduct({ ...newProduct, gender: "unisex" })
                 }
               />
               Unisex
@@ -319,8 +336,17 @@ const CreateProductForm = () => {
             </>
           ) : (
             <>
-              <PlusCircle className="mr-2 h-5 w-5" />
-              Create Product
+              {editingProduct ? (
+                <>
+                  <FilePen className="mr-2 h-5 w-5" />
+                  Edit Product
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="mr-2 h-5 w-5" />
+                  Create Product{" "}
+                </>
+              )}
             </>
           )}
         </button>

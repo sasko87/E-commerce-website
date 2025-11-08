@@ -31,8 +31,6 @@ const getFeaturedProducts = async (req, res) => {
       return res.status(404).send({ error: "No featured products found" });
     }
 
-    console.log(featuredProducts)
-
     await redis.set("featured_products", JSON.stringify(featuredProducts));
     return res.status(200).send(featuredProducts);
   } catch (error) {
@@ -42,7 +40,17 @@ const getFeaturedProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const { name, description, price, image, category, onSale, saleDiscount, isFeatured, gender } = req.body;
+    const {
+      name,
+      description,
+      price,
+      image,
+      category,
+      onSale,
+      saleDiscount,
+      isFeatured,
+      gender,
+    } = req.body;
     let cloudinaryResponse = null;
     if (image) {
       cloudinaryResponse = await cloudinary.uploader.upload(image, {
@@ -58,8 +66,16 @@ const createProduct = async (req, res) => {
       image: cloudinaryResponse?.secure_url
         ? cloudinaryResponse.secure_url
         : "",
-        onSale, saleDiscount, isFeatured, gender
+      onSale,
+      saleDiscount,
+      isFeatured,
+      gender,
     });
+
+    if (isFeatured) {
+      const featuredProducts = await filterProducts({ isFeatured: true });
+      await redis.set("featured_products", JSON.stringify(featuredProducts));
+    }
 
     return res.status(201).send(product);
   } catch (error) {
@@ -94,7 +110,6 @@ const deleteProduct = async (req, res) => {
 const getRecommendedProducts = async (req, res) => {
   try {
     const products = await recommendedProducts();
-    console.log("Recommended products:", products);
     return res.status(200).json({ products });
   } catch (error) {
     console.error("Error fetching recommended products:", error);
@@ -105,7 +120,6 @@ const getRecommendedProducts = async (req, res) => {
 const getProductsByCategoory = async (req, res) => {
   try {
     const { category } = req.params;
-    console.log(category);
     const products = await filterProducts({ category: category });
 
     return res.status(200).send({ products });
@@ -145,10 +159,38 @@ const updateOneProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
+
     const updatedProduct = await updateProduct(id, updateData);
+
+    const featuredProducts = await filterProducts({ isFeatured: true });
+    await redis.set("featured_products", JSON.stringify(featuredProducts));
+
     return res.status(200).send(updatedProduct);
   } catch (error) {
     return res.status(500).send({ error: error.message });
+  }
+};
+
+const getProductsOnSale = async (req, res) => {
+  try {
+    const { category, gender, sort } = req.query;
+    let filter = { onSale: true };
+
+    if (category) filter.category = category;
+    if (gender) filter.gender = gender;
+
+    let products = await Product.find(filter);
+
+    // ✅ Sort logic
+    if (sort === "price_asc") products.sort((a, b) => a.price - b.price);
+    if (sort === "price_desc") products.sort((a, b) => b.price - a.price);
+    if (sort === "discount_desc")
+      products.sort((a, b) => (b.saleDiscount || 0) - (a.saleDiscount || 0));
+
+    res.status(200).json(products);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch products on sale" });
   }
 };
 
@@ -161,4 +203,5 @@ export {
   getProductsByCategoory,
   toggleFeaturedProduct,
   updateOneProduct,
+  getProductsOnSale,
 };

@@ -15,7 +15,7 @@ const generateTokens = async (email) => {
   };
 
   const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "7d",
   });
 
   const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
@@ -30,7 +30,7 @@ const storeRefreshToken = async (email, refreshToken) => {
     `refresh_token: ${email}`,
     refreshToken,
     "EX",
-    7 * 24 * 60 * 60
+    7 * 24 * 60 * 60 * 1000
   );
 };
 
@@ -39,7 +39,7 @@ const setCookies = (res, accessToken, refreshToken) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 15 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.cookie("refreshToken", refreshToken, {
@@ -122,7 +122,7 @@ export const logout = async (req, res) => {
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET
       );
-      await redis.del(`refresh_token:${decoded.email}`);
+      await redis.del(`refresh_token: ${decoded.email}`);
     }
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
@@ -135,26 +135,25 @@ export const logout = async (req, res) => {
 export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
-    console.log(refreshToken)
-
+    console.log(refreshToken);
     if (!refreshToken) {
-       console.log("No refresh token provided")
+      console.log("No refresh token provided");
       return res.status(401).json({ message: "No refresh token provided" });
-     
     }
-
+    console.log("tuka 1");
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const storedToken = await redis.get(`refresh_token:${decoded.userId}`);
+    const storedToken = await redis.get(`refresh_token: ${decoded.email}`);
 
     if (storedToken !== refreshToken) {
-      console.log("Invalid refresh token")
+      console.log("Invalid refresh token");
       return res.status(401).json({ message: "Invalid refresh token" });
     }
+    console.log("tuka 2");
 
     const accessToken = jwt.sign(
-      { userId: decoded.userId },
+      { email: decoded.email },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     );
 
     res.cookie("accessToken", accessToken, {
@@ -164,7 +163,16 @@ export const refreshToken = async (req, res) => {
       maxAge: 15 * 60 * 1000,
     });
 
-    res.json({ message: "Token refreshed successfully" });
+    res.json({
+      message: "Token refreshed successfully",
+      accessToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.log("Error in refreshToken controller", error.message);
     res.status(500).json({ message: "Server error", error: error.message });

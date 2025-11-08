@@ -41,7 +41,7 @@ const OrderSummary = () => {
               ${formattedSubtotal}
             </dd>
           </dl>
-          {savings > 0 && (
+          {savings >= 1 && (
             <dl className="flex items-center justify-between gap-4">
               <dt className="text-base font-normal text-gray-300">Savings</dt>
               <dd className="text-base font-medium text-emerald-400">
